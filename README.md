@@ -11,7 +11,8 @@ pip3 install mcstatus
 
 **start scanning for servers:**
 ```
-sudo masscan -p25565 0.0.0.0/0 --max-rate <maxrate> --excludefile exclude.conf -oL masscan.txt (Set maxrate to a limit that you are comfortable with and won't melt your router)
+          Set the port to your requirements  Set maxrate to a limit that you are comfortable with and won't melt your router
+sudo masscan -p25560-25570 0.0.0.0/0 --max-rate 20000 --excludefile exclude.conf -oL masscan.txt 
 ```
 
 **find real minecraft servers from the results of the scan:**
