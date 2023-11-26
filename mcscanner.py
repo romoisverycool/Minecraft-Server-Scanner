@@ -1,6 +1,5 @@
 from mcstatus import JavaServer
 import os
-import math
 import threading
 import time
 import argparse
@@ -13,9 +12,6 @@ parser.add_argument("-v","--version", type=str, default="", required=False, help
 args = parser.parse_args()
 
 masscan = []
-print('Multithreaded mass minecraft server status checker by Footsiefat/Deathmonger')
-
-time.sleep(1)
 
 inputfile = args.inputfile
 outputfile = args.outputfile
@@ -23,7 +19,7 @@ publicserverlist = args.publicserverlist
 searchterm = args.version
 
 outfile = open(outputfile, 'a+')
-outfile.close
+outfile.close()
 
 fileHandler = open (inputfile, "r")
 listOfLines = fileHandler.readlines()
@@ -31,9 +27,8 @@ fileHandler.close()
 
 for line in listOfLines:
     if line.strip()[0] != "#":
-        masscan.append(line.strip().split(' ',4)[3])
-
-
+        ip2, port2 = line.strip().split(' ', 4)[3], line.strip().split(' ', 3)[2]
+        masscan.append((ip2, port2))
 
 def split_array(L,n):
     return [L[i::n] for i in range(n)]
@@ -49,6 +44,7 @@ if len(masscan) < int(threads):
 
 split = list(split_array(masscan, threads))
 
+
 exitFlag = 0
 
 class myThread (threading.Thread):
@@ -62,24 +58,31 @@ class myThread (threading.Thread):
         print ("Exiting Thread " + self.name)
 
 def print_time(threadName):
-    for z in split[int(threadName)]:
+    for z, a in split[int(threadName)]:
         if exitFlag:
             threadName.exit()
+
+
         try:
+            port = a
             ip = z
-            server = JavaServer(ip,25565)
+            print(port)
+            print(ip)
+            server = JavaServer.lookup(f'{ip}:{port}')
             status = server.status()
+            print(status)
+            print(ip, port)
         except:
-            print("Failed to get status of: " + ip)
+            print("Failed to get status of: " + ip + ":" + port)
         else:
-            print("Found server: " + ip + " " + status.version.name + " " + str(status.players.online))
+            print("Found server: " + ip + ":" + port + " " + status.version.name + " " + str(status.players.online))
             if searchterm in status.version.name:
                 with open(outputfile) as f:
                     if ip not in f.read():
                         with open(publicserverlist) as g:
                             if ip not in g.read():
                                 text_file = open(outputfile, "a")
-                                text_file.write(ip + " " + status.version.name.replace(" ", "_") + " " + str(status.players.online))
+                                text_file.write(ip + ":" + port + " " + status.version.name.replace(" ", "_") + " " + str(status.players.online))
                                 text_file.write(os.linesep)
                                 text_file.close()
 
