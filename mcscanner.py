@@ -12,6 +12,9 @@ parser.add_argument("-v","--version", type=str, default="", required=False, help
 args = parser.parse_args()
 
 masscan = []
+print('Multithreaded mass minecraft server status checker forked from: Footsiefat/Deathmonger , By Romoiscool')
+
+time.sleep(1)
 
 inputfile = args.inputfile
 outputfile = args.outputfile
